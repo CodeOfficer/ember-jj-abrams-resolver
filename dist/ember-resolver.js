@@ -20,7 +20,7 @@ define("resolver",
    * important features:
    *
    *  1) The resolver makes the container aware of es6 modules via the AMD
-   *     output. The loader's _seen is consulted so that classes can be 
+   *     output. The loader's _seen is consulted so that classes can be
    *     resolved directly via the module loader, without needing a manual
    *     `import`.
    *  2) is able provide injections to classes that implement `extend`
@@ -31,7 +31,7 @@ define("resolver",
     return {
       create: function (injections) {
         if (typeof klass.extend === 'function') {
-          return klass.extend(injections);  
+          return klass.extend(injections);
         } else {
           return klass;
         }
@@ -124,13 +124,13 @@ define("resolver",
       }
 
       if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('hit', moduleName);
+        Ember.Logger.info('[✓]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
       }
 
       return module;
     } else {
       if (Ember.ENV.LOG_MODULE_RESOLVER) {
-        Ember.Logger.info('miss', moduleName);
+        Ember.Logger.info('[ ]', parsedName.fullName, new Array(40 - parsedName.fullName.length).join('.'), moduleName);
       }
       return this._super(parsedName);
     }
@@ -153,7 +153,12 @@ define("resolver",
       // 1. `needs: ['posts/post']`
       // 2. `{{render "posts/post"}}`
       // 3. `this.render('posts/post')` from Route
-      return Ember.String.dasherize(fullName.replace(/\./g, '/'));
+      var split = fullName.split(':');
+      if (split.length > 1) {
+        return split[0] + ':' + Ember.String.dasherize(split[1].replace(/\./g, '/'));
+      } else {
+        return fullName;
+      }
     }
   });
 
